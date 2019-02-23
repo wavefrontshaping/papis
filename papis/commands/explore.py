@@ -640,3 +640,21 @@ def cmd(ctx, command):
         splitted_command = shlex.split(fcommand)
         logger.info('Calling %s' % splitted_command)
         call(splitted_command)
+
+@cli.command()
+def shell():
+    """
+    An experimental shell
+    """
+    from prompt_toolkit.history import FileHistory
+    from prompt_toolkit.enums import EditingMode
+    prompt_kwargs = {
+        'history': FileHistory(
+            os.path.expanduser('~/.cache/papis-export-shell-history')
+        ),
+        'editing_mode': EditingMode.EMACS
+        if papis.config.get('tui-editmode') == 'emacs'
+        else EditingMode.VI,
+    }
+    from click_repl import repl
+    repl(click.get_current_context(), prompt_kwargs=prompt_kwargs)
